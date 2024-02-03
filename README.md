@@ -1,12 +1,12 @@
 # <img src='https://www.openhab.org/openhab-logo-square.png' card_color='#40DBB0' width='50' height='50' style='vertical-align:bottom'/> openHAB
-This skill adds openHAB support to Mycroft.
+This skill adds openHAB support to OVOS/Neon.  **Please note that this is not an official OVOS or Neon skill. This version of the openHAB skill is not maintained by the openHAB community.**
 
 ## About 
-This skill adds [openHAB](http://www.openhab.org/) support to [Mycroft](https://mycroft.ai).
+This skill adds [openHAB](http://www.openhab.org/) support to [OVOS](https://openvoiceos.org).
 The skill takes advantage of the openHAB REST API, so it works both with the v1.x and v2.x of openHAB.
 
-In order to make openHAB Items accessible to Mycroft, they need to be [tagged](https://www.openhab.org/addons/integrations/homekit/).
-Device names recognized by Mycroft are matched against openHAB Item Labels.
+In order to make openHAB Items accessible to OVOS/Neon, they need to be [tagged](https://www.openhab.org/addons/integrations/homekit/).
+Device names recognized by OVOS/Neon are matched against openHAB Item Labels.
 
 The above examples would all work with the following set of openHAB Item definitons:
 
@@ -24,14 +24,15 @@ Number MainThermostatTargetTemperature "Main Thermostat Target Temperature" (gMa
 String MainThermostatHeatingCoolingMode "Main Thermostat Heating/Cooling Mode" (gMainThermostat) [ "homekit:HeatingCoolingMode" ]
 ```
 
-If items are modified in openHAB, a refresh in Mycroft is needed by the command:
+If items are modified in openHAB, a refresh in OVOS/Neon is needed by the command:
 
-- *"Hey Mycroft, refresh openhab items"*
+- *"Hey Mycroft/Neon, refresh openhab items"*
 
-If you've forgotten what items have been identified, you can ask Mycroft:
-- *"Hey Mycroft, list openhab items"*
+If you've forgotten what items have been identified, you can ask OVOS/Neon:
+- *"Hey Mycroft/Neon, list openhab items"*
 
 ## Versions Change Log
+* 2.0 refactor/modernization to support OVOS and Neon (provided AS-IS, no guarantee it works, I have no way of testing and the code hadn't been touched in 4 years. Here be dragons)
 * 1.5 addedd support to core v19
 * 1.4 added spanish translation
 * 1.3 added german translation
@@ -43,51 +44,57 @@ If you've forgotten what items have been identified, you can ask Mycroft:
 
 ## Installation
 
-From 18.2.5b mycroft-core release it is possible to install the skill using the voice command:
-- *"Hey Mycroft, install openhab"*
+In OVOS and Neon, skill installation occurs via pip. To install the openHAB skill, run the following command:
 
-or via the [msm](https://mycroft.ai/documentation/msm/) command:
-```shell
-msm install openhab
+```bash
+pip install git+https://github.com/mikejgray/ovos-skill-openhab
 ```
 
-To manually install the skill:
-Clone this repository into your `~/.mycroft/skills` directory.
-Then install the dependencies inside your mycroft virtual environment:
+In Neon, skill installation must happen in `~/.config/neon/neon.yaml` to persist:
 
-If on picroft just skip the workon part and the directory will be `/opt/mycroft/skills`
-
-```shell
-cd ~/.mycroft/skills
-git clone https://github.com/openhab/openhab-mycroft.git skill-openhab
-workon mycroft
-cd skill-openhab
-pip install -r requirements.txt
+```yaml
+skills:
+  default_skills:
+    - git+https://github.com/mikejgray/ovos-skill-openhab
 ```
+
+If `skills.default_skills` doesn't exist, add it. If it does, you only need to add the last line.
+
+After installation, the skill needs to be configured. In Neon, the path is `~/.config/neon/skills/ovos-skill-openhab.mikejgray/settings.json`. In OVOS, it is `~/.config/mycroft/skills/ovos-skill-openhab.mikejgray/settings.json`:
+
+```json
+{
+    "host": "192.168.1.42",
+    "port": 8080
+}
+```
+
+Replace the host IP and port with your openHAB server's IP and port. The default port is 8080.
 
 ## Examples 
-* "Hey Mycroft, turn on Diningroom Light"
-* "Hey Mycroft, switch off Kitchen Light"
-* "Hey Mycroft, put on Good Night"
-* "Hey Mycroft, what is Good Night status?"
-* "Hey Mycroft, what is the status of Good Night?"
-* "Hey Mycroft, set Diningroom to 50 percent"
-* "Hey Mycroft, dim Kitchen"
-* "Hey Mycroft, bright Kitchen"
-* "Hey Mycroft, dim Kitchen by 20 percent"
-* "Hey Mycroft, what's Bedroom temperature?"
-* "Hey Mycroft, tell me the temperature of Bedroom"
-* "Hey Mycroft, what's the Bedroom humidity?"
-* "Hey Mycroft, I'd like to know the humidity of Bedroom"
-* "Hey Mycroft, adjust Main Thermostat to 21 degrees"
-* "Hey Mycroft, regulate Main Thermostat to 20 degrees"
-* "Hey Mycroft, decrease Main Thermostat by 2 degrees"
-* "Hey Mycroft, increase Main Thermostat by 1 degrees"
-* "Hey Mycroft, what is Main Thermostat is regulated to?"
-* "Hey Mycroft, how the Main Thermostat tuned to?"
+* "Hey Mycroft/Neon, turn on Diningroom Light"
+* "Hey Mycroft/Neon, switch off Kitchen Light"
+* "Hey Mycroft/Neon, put on Good Night"
+* "Hey Mycroft/Neon, what is Good Night status?"
+* "Hey Mycroft/Neon, what is the status of Good Night?"
+* "Hey Mycroft/Neon, set Diningroom to 50 percent"
+* "Hey Mycroft/Neon, dim Kitchen"
+* "Hey Mycroft/Neon, bright Kitchen"
+* "Hey Mycroft/Neon, dim Kitchen by 20 percent"
+* "Hey Mycroft/Neon, what's Bedroom temperature?"
+* "Hey Mycroft/Neon, tell me the temperature of Bedroom"
+* "Hey Mycroft/Neon, what's the Bedroom humidity?"
+* "Hey Mycroft/Neon, I'd like to know the humidity of Bedroom"
+* "Hey Mycroft/Neon, adjust Main Thermostat to 21 degrees"
+* "Hey Mycroft/Neon, regulate Main Thermostat to 20 degrees"
+* "Hey Mycroft/Neon, decrease Main Thermostat by 2 degrees"
+* "Hey Mycroft/Neon, increase Main Thermostat by 1 degrees"
+* "Hey Mycroft/Neon, what is Main Thermostat is regulated to?"
+* "Hey Mycroft/Neon, how the Main Thermostat tuned to?"
 
 ## Credits 
-@mortommy
+- @mortommy
+- @mikejgray (fork)
 
 ## Category
 **IoT**

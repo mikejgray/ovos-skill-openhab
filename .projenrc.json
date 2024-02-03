@@ -1,5 +1,12 @@
 {
   "type": "@mikejgray/ovos-skill-projen.OVOSSkillProject",
   "name": "ovos-skill-openhab",
-  "retrofit": true
+  "retrofit": true,
+  "author": "Mike Gray",
+  "authorAddress": "mike@graywind.org",
+  "authorHandle": "mikejgray",
+  "repositoryUrl": "https://github.com/mikejgray/test-skill",
+  "packageDir": ".",
+  "skillClass": "openHABSkill",
+  "license": "EPL-2.0"
 }
