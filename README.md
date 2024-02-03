@@ -60,6 +60,14 @@ skills:
 
 If `skills.default_skills` doesn't exist, add it. If it does, you only need to add the last line.
 
+If you're running Neon, please note you will also need to blacklist the Home Assistant skill as it shares some intents with this skill: 
+ 
+```yaml
+skills: 
+  blacklisted_skills: 
+    - neon_homeassistant_skill.mikejgray 
+``` 
+
 After installation, the skill needs to be configured. In Neon, the path is `~/.config/neon/skills/ovos-skill-openhab.mikejgray/settings.json`. In OVOS, it is `~/.config/mycroft/skills/ovos-skill-openhab.mikejgray/settings.json`:
 
 ```json
