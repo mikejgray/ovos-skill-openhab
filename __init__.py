@@ -1,3 +1,8 @@
+# TODO: Remove unused OVOS imports
+from ovos_workshop.decorators import intent_handler
+from ovos_workshop.skills import OVOSSkill
+from ovos_utils.intents import IntentBuilder
+from ovos_bus_client.message import Message
 # -*- coding: iso-8859-15 -*-
 
 #
@@ -15,9 +20,12 @@
 
 from os.path import dirname
 
-from adapt.intent import IntentBuilder
-from mycroft.skills.core import MycroftSkill, intent_handler
-from mycroft.util.log import getLogger
+# TODO: Replace Adapt IntentBuilder import
+# from adapt.intent import IntentBuilder
+# TODO: Remove all Mycroft imports
+# from mycroft.skills.core import MycroftSkill, intent_handler
+# TODO: Remove all Mycroft imports
+# from mycroft.util.log import getLogger
 from rapidfuzz import fuzz
 
 import requests
@@ -44,7 +52,7 @@ __author__ = 'mortommy'
 
 LOGGER = getLogger(__name__)
 
-class openHABSkill(MycroftSkill):
+class openHABSkill(OVOSSkill):
 
 	def __init__(self):
 		super(openHABSkill, self).__init__(name="openHABSkill")
@@ -393,5 +401,6 @@ class openHABSkill(MycroftSkill):
 	def stop(self):
 		pass
 
+# TODO: Remove create_skill() function
 def create_skill():
     return openHABSkill()
