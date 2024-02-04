@@ -12,8 +12,8 @@
 #
 # SPDX-License-Identifier: EPL-2.0
 #
+from ovos_workshop.intents import IntentBuilder
 from ovos_workshop.skills import OVOSSkill
-from ovos_utils.intents import IntentBuilder
 from rapidfuzz import fuzz
 
 import requests
