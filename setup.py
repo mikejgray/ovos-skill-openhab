@@ -3,7 +3,7 @@ from setuptools import setup
 from os import walk, path
 
 BASEDIR = path.abspath(path.dirname(__file__))
-URL = "https://github.com/mikejgray/test-skill"
+URL = "https://github.com/mikejgray/ovos-skill-openhab"
 SKILL_CLAZZ = "openHABSkill"  # needs to match __init__.py class name
 PYPI_NAME = "ovos-skill-openhab"  # pip install PYPI_NAME
 
@@ -78,4 +78,5 @@ setup(
     install_requires=get_requirements("requirements.txt"),
     keywords="ovos skill voice assistant",
     entry_points={"ovos.plugin.skill": PLUGIN_ENTRY_POINT},
+    extras_require={"test": get_requirements("requirements-test.txt")},
 )

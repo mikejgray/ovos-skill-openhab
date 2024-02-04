@@ -5,7 +5,7 @@
   "author": "Mike Gray",
   "authorAddress": "mike@graywind.org",
   "authorHandle": "mikejgray",
-  "repositoryUrl": "https://github.com/mikejgray/test-skill",
+  "repositoryUrl": "https://github.com/mikejgray/ovos-skill-openhab",
   "packageDir": ".",
   "skillClass": "openHABSkill",
   "license": "EPL-2.0"
