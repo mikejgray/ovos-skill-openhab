@@ -39,14 +39,12 @@ __author__ = 'mortommy'
 
 class openHABSkill(OVOSSkill):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, bus=None, skill_id='', **kwargs):
+        super().__init__(*args, bus=bus, skill_id=skill_id, **kwargs)
 
         self.command_headers = {"Content-type": "text/plain"}
-
         self.polling_headers = {"Accept": "application/json"}
 
-        self.url = None
         self.lightingItemsDic = dict()
         self.switchableItemsDic = dict()
         self.currentTempItemsDic = dict()
@@ -54,21 +52,9 @@ class openHABSkill(OVOSSkill):
         #self.currentThermostatItemsDic = dict()
         self.targetTemperatureItemsDic = dict()
         #self.homekitHeatingCoolingModeDic = dict()
+        self.getTaggedItems()
 
     def initialize(self):
-
-        supported_languages = ["en-us", "it-it", "de-de", "es-es"]
-
-        if self.lang not in supported_languages:
-            self.log.warning("Unsupported language for " + self.name + ", shutting down skill.")
-            self.shutdown()
-
-        self.handle_websettings_update()
-        
-        if self.url is not None:
-            self.getTaggedItems()
-        else:
-            self.speak_dialog('ConfigurationNeeded')
 
         refresh_tagged_items_intent = IntentBuilder("RefreshTaggedItemsIntent").require("RefreshTaggedItemsKeyword").build()
         self.register_intent(refresh_tagged_items_intent, self.handle_refresh_tagged_items_intent)
@@ -91,17 +77,21 @@ class openHABSkill(OVOSSkill):
         list_items_intent = IntentBuilder("ListItemsIntent").require("ListItemsKeyword").build()
         self.register_intent(list_items_intent, self.handle_list_items_intent)
 
-        self.settings_change_callback = self.handle_websettings_update
-
     def get_config(self, key):
         return (self.settings.get(key) or self.config_core.get('openHABSkill', {}).get(key))
 
-    def handle_websettings_update(self):
-        if self.get_config('host') is not None and self.get_config('port') is not None:
-            self.url = "http://%s:%s/rest" % (self.get_config('host'), self.get_config('port'))
-            self.getTaggedItems()
-        else:
-            self.url = None
+    @property
+    def host(self):
+        return self.get_config('host')
+
+    @property
+    def port(self):
+        return self.get_config('port')
+
+    @property
+    def url(self):
+        if self.host and self.port:
+            return f"http://{self.host}:{self.port}/rest"
 
     def getTaggedItems(self):
         #find all the items tagged Lighting and Switchable from openHAB
@@ -118,7 +108,7 @@ class openHABSkill(OVOSSkill):
         if self.url is None:
             self.log.error("Configuration needed!")
             self.speak_dialog('ConfigurationNeeded')
-        else:            
+        else:
             requestUrl = self.url+"/items?recursive=false"
 
             try: 
@@ -128,7 +118,7 @@ class openHABSkill(OVOSSkill):
                     for x in range(0,len(json_response)):
                         if ("Lighting" in json_response[x]['tags']):
                             self.lightingItemsDic.update({json_response[x]['name']: json_response[x]['label']})
-                        elif ("Switchable" in json_response[x]['tags']):
+                        elif ("Switch" in json_response[x]['tags'] or "Switchable" in json_response[x]['tags']):
                             self.switchableItemsDic.update({json_response[x]['name']: json_response[x]['label']})
                         elif ("CurrentTemperature" in json_response[x]['tags']):
                             self.currentTempItemsDic.update({json_response[x]['name']: json_response[x]['label']})
