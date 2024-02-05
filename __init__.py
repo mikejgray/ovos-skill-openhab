@@ -144,13 +144,15 @@ class openHABSkill(OVOSSkill):
                             pass
                 else:
                     self.log.error("Some issues with the command execution!")
+                    self.log.error("Status code: %s" % (req.status_code))
+                    self.log.error("OpenHAB response: %s" % (req.text))
                     self.speak_dialog('GetItemsListError')
-
+                    return
             except KeyError:
-                        pass
-            except Exception:
-                    self.log.error("Some issues with the command execution!")
-                    self.speak_dialog('GetItemsListError')
+                pass
+            except Exception as err:
+                self.log.error(f"Some issues with the command execution!\n{err}")
+                self.speak_dialog('GetItemsListError')
 
     def findItemName(self, itemDictionary, messageItem):
 
@@ -187,7 +189,7 @@ class openHABSkill(OVOSSkill):
         self.speak_dialog('FoundItems', {'items': msg.strip()})
 
     def handle_refresh_tagged_items_intent(self, message):
-        #to refresh the openHAB items labeled list we use an intent, we can ask Mycroft to make the refresh
+        #to refresh the openHAB items labeled list we use an intent, we can ask the assistant to make the refresh
 
         self.getTaggedItems()
         dictLenght = str(len(self.lightingItemsDic) + len(self.switchableItemsDic) + len(self.currentTempItemsDic) + len(self.currentHumItemsDic) + len(self.currentThermostatItemsDic) + len(self.targetTemperatureItemsDic) + len(self.homekitHeatingCoolingModeDic))
@@ -311,7 +313,7 @@ class openHABSkill(OVOSSkill):
             state = self.getCurrentItemStatus(ohItem)
             self.speak_dialog('TempHumStatus', {'item': messageItem, 'temp_hum': infoType, 'temp_hum_val': state, 'units_of_measurement': unitOfMeasure})
         else:
-            self.log.error("Item not found!")
+            self.log.error(f"Item {messageItem} not found!")
             self.speak_dialog('ItemNotFoundError')
 
     def handle_setTemp_status_intent(self, message):
@@ -343,7 +345,7 @@ class openHABSkill(OVOSSkill):
             if statusCode == 200:
                 self.speak_dialog('ThermostatStatus', {'item': messageItem, 'temp_val': str(newTempValue)})
             elif statusCode == 404:
-                self.log.error("Some issues with the command execution! Item not found")
+                self.log.error(f"Some issues with the command execution! Item {messageItem} not found")
                 self.speak_dialog('ItemNotFoundError')
             else:
                 self.log.error("Some issues with the command execution!")
@@ -356,12 +358,18 @@ class openHABSkill(OVOSSkill):
     def sendStatusToItem(self, ohItem, command):
         requestUrl = self.url+"/items/%s/state" % (ohItem)
         req = requests.put(requestUrl, data=command, headers=self.command_headers, timeout=5)
+        if req.status_code > 299:
+            self.log.error("Unable to send status to item %s" % (ohItem))
+            self.log.error(req.text)
 
         return req.status_code
 
     def sendCommandToItem(self, ohItem, command):
         requestUrl = self.url+"/items/%s" % (ohItem)
         req = requests.post(requestUrl, data=command, headers=self.command_headers, timeout=5)
+        if req.status_code > 299:
+            self.log.error("Unable to send command to item %s" % (ohItem))
+            self.log.error(req.text)
 
         return req.status_code
 
@@ -376,6 +384,8 @@ class openHABSkill(OVOSSkill):
                 state = req.text
             else:
                 self.log.error("Some issues with the command execution!")
+                self.log.error("Status code: %s" % (req.status_code))
+                self.log.error("OpenHAB response: %s" % (req.text))
                 self.speak_dialog('CommunicationError')
 
         except KeyError:
