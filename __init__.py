@@ -52,10 +52,10 @@ class openHABSkill(OVOSSkill):
         #self.currentThermostatItemsDic = dict()
         self.targetTemperatureItemsDic = dict()
         #self.homekitHeatingCoolingModeDic = dict()
-        self.getTaggedItems()
 
     def initialize(self):
 
+        self.getTaggedItems()
         refresh_tagged_items_intent = IntentBuilder("RefreshTaggedItemsIntent").require("RefreshTaggedItemsKeyword").build()
         self.register_intent(refresh_tagged_items_intent, self.handle_refresh_tagged_items_intent)
 
