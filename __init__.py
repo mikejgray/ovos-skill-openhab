@@ -40,10 +40,9 @@ __author__ = 'mortommy'
 class openHABSkill(OVOSSkill):
 
     def __init__(self, *args, bus=None, skill_id='', **kwargs):
-        super().__init__(*args, bus=bus, skill_id=skill_id, **kwargs)
-
         self.command_headers = {"Content-type": "text/plain"}
         self.polling_headers = {"Accept": "application/json"}
+        super().__init__(*args, bus=bus, skill_id=skill_id, **kwargs)
 
         self.lightingItemsDic = dict()
         self.switchableItemsDic = dict()
@@ -52,10 +51,10 @@ class openHABSkill(OVOSSkill):
         #self.currentThermostatItemsDic = dict()
         self.targetTemperatureItemsDic = dict()
         #self.homekitHeatingCoolingModeDic = dict()
-        self.getTaggedItems()
 
     def initialize(self):
 
+        self.getTaggedItems()
         refresh_tagged_items_intent = IntentBuilder("RefreshTaggedItemsIntent").require("RefreshTaggedItemsKeyword").build()
         self.register_intent(refresh_tagged_items_intent, self.handle_refresh_tagged_items_intent)
 
